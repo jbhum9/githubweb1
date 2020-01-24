@@ -39,21 +39,6 @@ Released   : 20130902
 <link href="default.css" rel="stylesheet" type="text/css" media="all" />
 <link href="fonts.css" rel="stylesheet" type="text/css" media="all" />
 
-<?php
-$servername= "localhost";
-$username= "test"; 
-$password= "jbHum;5234";
-$database= "ServerJS";
-
-// Connect to Database 
-$conn = new mysqli($servername, $username, $password, $database); 
-
-// Check Connection 
-if ($conn -> connect_error) {
- die("Connection failed: " . $conn->connect_error);
-}
-?>
-
 </head>
 <body>
 <div id="header-wrapper">
