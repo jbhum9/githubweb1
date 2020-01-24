@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title> Josh's Task Results</title>
+		<link href="style.css" rel="stylesheet" />
+		<link href="https://fonts.googleapis.com/css?family=Teko:400,500&display=swap" rel="stylesheet">
+		<script src="config.js"></script>
+		<script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+		<script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+		<script src="https://unpkg.com/babel-standalone@6.26.0/babel.js"></script>
+	</head>
+	<body>		
+		<div id="taskapp"></div>
+		<script type="text/babel">
+		
+		const api = "http://learn.evermight.net/johnlai/api/index.php";
+			
+	function LoginApp(props) {
+			return(
+			<form>
+				<label>Username:</label>
+					<input type="text" placeholder="username" onChange={evt=>props.taskapp.setState({"user": evt.currentTarget.value})} value={props.taskapp.state.user}/>
+				<label>Password:</label>
+					<input type="password" placeholder="password" onChange={evt=>props.taskapp.setState({"pass": evt.currentTarget.value})} value={props.taskapp.state.pass}/>
+				<button type="button" onClick={_=>props.taskapp.getTasks()}>Login</button>
+				{props.taskapp.state.login_id == 1 && <p className="error">You have inputted the wrong username and password. Please try again!</p>}
+			</form>
+			);
+		}
+
+	function TaskList(props) {
+			return(
+			
+			<div id= "myTask">
+			
+			<nav>		
+				<button type="button" onClick={evt=>props.taskapp.setState({"login_id":0})}>Logout</button>
+			</nav>
+	
+	<h1>Josh's Task List</h1>
+	
+	<h1>Add new task</h1>
+			<form>
+				<label>Task:</label>
+					<input type="text" onChange={evt=>props.taskapp.setState({"taskInput": evt.currentTarget.value})} value={props.taskapp.state.taskInput}/>
+					
+				<label>Priority:</label>
+					<select onChange={evt=>props.taskapp.setState({"priority": evt.currentTarget.value})} value={props.taskapp.state.priority}>
+					{["--Priority--","Highest", "Average", "Lowest"].map((item,ky)=><option key={ky}>{item}</option>)}
+					</select> 
+					
+				<label>Status:</label>
+					<input type="checkbox" onChange={evt=>props.taskapp.setState({"status": evt.currentTarget.value})} value={props.taskapp.state.status} />
+					
+				<label>Duedate:</label>
+					<input type="date" onChange={evt=>props.taskapp.setState({"dueDate": evt.currentTarget.value})} value={props.taskapp.state.dueDate}/>
+					
+				<button type="button" onClick={evt=>props.taskapp.addTasks()}>Add</button>
+			</form>
+				
+				<h1>My Task List</h1>
+				
+				<form id= "taskBody">
+				{props.taskapp.state.tasks.map((item,ky)=><p key={ky}>
+				
+					[{item.content.taskInput}]
+					
+					[{item.content.priority}]
+					
+					[{item.content.status}]
+					
+					[{item.content.dueDate}]
+					
+					<button type="button" onClick={evt=>props.taskapp.deleteTask(item.id)}>Delete</button>
+					
+					<button type="button" onClick={evt=>props.taskapp.editTask(item.id)}>Edit</button>
+				</p>)}
+				</form>
+				
+			</div>
+			);
+		}
+
+class App extends React.Component {
+	constructor(props) {
+		super(props);
+		
+		this.state = {
+			"user":"jbhum8",
+			"pass":"^Star^Burst^Cashew!!!",
+			//0 is not attempted, 1 is failed, 2 is a success
+			"login_id": 0,
+			//set to zero if creating a new edited task, -1 if listing the task
+			"task_id": -1,
+			"tasks":[],
+			"taskInput":"",
+			"priority":"",
+			"saved":true,
+			"status":false,
+			"dueDate":""
+		}
+	}
+	
+	getTasks() {
+		fetch(this.props.api,{
+			"method":"GET",
+			"headers":{
+				"Authorization":`Basic ${this.state.user}`,
+				"Auth-Secret": this.state.pass,
+				}
+			})
+		.then(response=>response.ok ? response.json() : response)
+						
+		.then(result=>
+			this.setState(result.status == "success" ? {"login_id":2,"tasks":result.data} : {"login_id":1})
+			)
+			.catch(e=>console.log(e));
+		}
+	
+	addTasks() {
+		let taskResults = `taskInput=${this.state.taskInput}&priority=${this.state.priority}&status=${this.state.status}&dueDate=${this.state.dueDate}`;
+		let apiLink = `${this.props.api}`;
+		
+		fetch(apiLink,{
+			"method":"POST",
+			"headers":{
+				"Content-Type":"application/x-www-form-urlencoded",
+				"Authorization":`Basic ${this.state.user}`,
+				"Auth-Secret":this.state.pass,
+				},
+			"body":taskResults
+			})
+		.then(response=>response.ok ? response.json() : response)
+		.then(result=>{
+			if (result.status == "success")
+				this.setState({taskInput:"", priority:"", status:true, dueDate:""})
+				{this.getTasks();};
+				alert("You have successfully added a task")
+			})
+				.catch(e=>console.log(e));
+		}
+		
+	editTask(id) {
+		let taskResults = `id=${this.state.taskInput}&priority=${this.state.priority}&status=${this.state.status}&dueDate=${this.state.dueDate}`;
+		let apiLink = `${this.props.api}`;
+		if(this.state.id > 0)
+			taskResults += `&id=${this.setState.id}`;
+		
+		fetch(apiLink,{
+			"method":this.state.id > 0 ? "PUT": "POST",
+			"headers":{
+				"Content-Type":"application/x-www-form-urlencoded",
+				"Authorization": `Basic ${this.state.user}`,
+				"Auth-Secret":this.state.pass,
+				},
+			"body":taskResults
+			})
+		.then(response=>response.ok ? response.json() : response)
+		.then(result=>{
+			console.log(result);
+			if(result.status == "success"){
+				this.setState({"id":result.data.id, "saved":true})
+				confirm("Are you sure you want to edit the task?")
+				}
+			else{
+				alert("You could not edit task!")
+				};
+			})
+				.catch(e=>console.log(e));
+			}
+		
+	deleteTask(id) {
+		let taskResults = `id=${this.state.taskInput}&priority=${this.state.priority}&status=${this.state.status}&dueDate=${this.state.dueDate}`;
+		let apiLink = `${this.props.api}`;
+		
+		taskResults = `id=${id}`;
+		
+		fetch(apiLink,{
+			"method":"DELETE",
+			"headers":{
+				"Content-Type":"application/x-www-form-urlencoded",
+				"Authorization": `Basic ${this.state.user}`,
+				"Auth-Secret":this.state.pass,
+				},
+			"body":taskResults
+			})
+		.then(response=>response.ok ? response.json() : response)
+		.then(result=>{
+			console.log(result);
+			if(result.status == "success"){
+					this.getTasks();
+					alert("You have just deleted the task")
+				};
+			})
+				.catch(e=>console.log(e));
+			}
+		
+		render() {
+			if(this.state.login_id != 2)
+				return <LoginApp taskapp={this} />;
+			else if(this.state.id > -1)
+				return <TaskList taskapp={this} api={this.props.api} />;
+			else
+				return <TaskList taskapp={this} api={this.props.api} />;
+			}
+		
+		}
+		
+	ReactDOM.render(<App api={api} />, document.getElementById('taskapp'));
+	
+		</script>
+	</body>
+</html>
