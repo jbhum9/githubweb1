@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link href="style.css" rel="stylesheet" />
+		<script src="settings.js"></script>
+		<script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+		<script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+		<script src="https://unpkg.com/babel-standalone@6.26.0/babel.js"></script>
+	</head>
+	<body>
+		<h1>Geography Quiz!</h1>
+		<div id="geoApp"></div>
+		<script type="text/babel">
+	
+	let indexQuestion = 0;
+	let WAIT_TIME = 20;
+	
+	class LoadApplication extends React.Component {
+	
+	constructor(props){
+		super (props);
+		
+		this.state = {
+			"question":"",
+			"choices":[""],
+			"answer": "",
+			"checkedMessage": "", 
+			"selectedNotification":"",
+			"timerId": "",
+			"timeExpired":false
+		}
+	}	
+	
+	showExpiration(evt) {
+		const stateTime = {"timeExpired":true};
+		this.setState(stateTime);
+		alert("TIME IS UP! Click OK if you wish to continue");	
+	}
+	
+	componentTimerId(evt) {
+		this.state.timerId = setTimeout(_=>{this.showExpiration(_)}, this.props.WAIT_TIME*1000);
+	}
+	
+	changeNextQuestion(evt) {
+		const nextQuestion = {"question": evt.currentTarget.value};
+		this.setState(nextQuestion);	
+		if(this.props.data[indexQuestion].answer === this.state.choices) {
+			indexQuestion++
+			const message= {"checkedMessage": "CORRECT! You got the answer right!"};
+			this.setState(message);
+			if(indexQuestion >= this.props.data.length){
+				indexQuestion = 0;
+				const message = {"checkedMessage": "CONGRATS!! You have finished the quiz!!"};
+				this.setState(message);
+				const notification = {"selectedNotification": "Refresh to clear validation message and start quiz again!"};
+				this.setState(notification);
+			}
+		}
+		else {
+			const message = {"checkedMessage": "TRY AGAIN! You did not get the right answer."};
+			this.setState(message);
+		}
+	}
+	
+	myChoices(evt){
+		const stateChoices = {"choices": evt.currentTarget.value}
+		this.setState(stateChoices);
+	}
+	
+	render() {
+		let question = "";
+		let options = "";
+		let button = "";
+		let message = "";
+		let notification = "";
+		
+			question = <p>{this.props.data[indexQuestion].question}</p>
+			options = <select onChange={_=>this.myChoices(_)} value={this.state.choices}>
+				{this.props.data[indexQuestion].choices.map(item=><option key={item}>{item}</option>)}
+			</select>
+			button = <button onClick={_=>this.changeNextQuestion(_)} value={this.state.question}>Next</button>
+			message = <p>{this.state.checkedMessage}</p>
+			notification = <p>{this.state.selectedNotification}</p>
+			clearInterval(this.state.timerId)
+			this.state.timerId = setTimeout(_=>{this.showExpiration(_)}, this.props.WAIT_TIME*1000);
+		
+		return (
+		<div>
+		<p id="note">You have <strong><span id="seconds"></span> {this.props.WAIT_TIME} seconds</strong> to answer each question.</p>
+			{question}
+			{options} 
+			{button}
+			{message}
+			<small>{notification}</small>
+		</div>
+			)
+	}
+}
+
+
+ReactDOM.render(<LoadApplication data={QUESTIONS} WAIT_TIME={WAIT_TIME} />, document.getElementById('geoApp'));
+		</script>
+	</body>
+</html>

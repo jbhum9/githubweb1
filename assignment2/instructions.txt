@@ -1,0 +1,46 @@
+ASSIGNMENT
+==========
+
+Instructions explained in this video here:
+
+https://youtu.be/RNr7UPEOX0Y
+
+
+// BASICS
+//------------------------
+
+10 points	-	Add at least 3 more questions to the QUESTIONS array.
+
+10 points	-	Question and drop down must present the appropriate
+				information from the QUESTIONS array.
+
+10 points	-	Clicking the Next button should check whether the person's
+				answer is correct or not and give the appropriate message.
+				BONUS: extra points if you print messages to an HTML element instead of using alert.
+
+10 points	-	Clicking the Next button should move to the next question.
+				If there are no more questions, then print a message to
+				congratulate the user for completion.
+				BONUS: extra points if you print messages to an HTML (or JSX) element instead of using alert.				
+
+
+// OPTIONAL
+//
+// These optional items will only be considered if they do not break
+// the MANDATORY functionality declared above
+//------------------------
+5 points	-	Notify the user with an alert() message if time for
+				the question has expired.  Every time the user moves on to
+				the next question, the expiration time resets
+
+5 points	-	Change the questions drop down menu to radio options.
+
+5 points	-	Add some interesting CSS styles.
+
+5 points	-	Reserved for instructor to assign bonus points if student should
+				demonstrate exceptional understanding of javascript programming.
+				These bonus points are in addition to any BONUS points mentioned above.
+				
+				
+TOTAL POINTS = 60
+(if you are super exceptional, it is possible to get a grade higher than 60 points)

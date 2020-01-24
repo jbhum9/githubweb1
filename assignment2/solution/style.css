@@ -1,0 +1,29 @@
+#geoApp {
+	border: 3px solid #89e
+}
+
+h1 {
+	text-shadow: 3px 3px #ffffff
+}
+
+body {
+	background: url("img/nature.png")
+}
+strong {
+	font-size: 25px;
+}
+
+#question {
+	color: blue; 
+	font-size: 20px;
+}
+
+#note {
+	color: red;
+}
+
+button {
+	font-weight: bold;
+	color: black;
+	background-color: #A4E864;
+}
