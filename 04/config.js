@@ -1,1 +1,1 @@
-var API_URL = "http://learn.evermight.net/johnlai/api/";
+var API_URL = "https://learn.evermight.net/johnlai/api/";
